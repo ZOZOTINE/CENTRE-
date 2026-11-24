@@ -1,0 +1,467 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AU CENTRE DE LA TERRE — EXPÉDITION 01</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --bg:#080c12;--panel:#111923;--line:#263440;
+ --text:#edf2f5;--muted:#a8b6c1;--cyan:#67dcff;--orange:#ff9b57;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+button{cursor:pointer;font-family:inherit}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* INTRO */
+#intro{
+ position:fixed;inset:0;z-index:100;background:#020509;
+ display:flex;align-items:center;justify-content:center;
+ overflow:hidden;text-align:center;
+}
+#intro::before{
+ content:"";position:absolute;inset:0;
+ background:
+ radial-gradient(circle at 50% 45%,#19384a 0%,#08131e 35%,#020509 80%);
+}
+.stars{
+ position:absolute;inset:0;
+ background-image:
+ radial-gradient(1px 1px at 20% 20%,#fff 50%,transparent),
+ radial-gradient(2px 2px at 70% 30%,#9adfff 50%,transparent),
+ radial-gradient(1px 1px at 45% 80%,#fff 50%,transparent),
+ radial-gradient(2px 2px at 85% 65%,#fff 50%,transparent),
+ radial-gradient(1px 1px at 12% 75%,#fff 50%,transparent);
+ background-size:270px 230px;
+ opacity:.5;
+}
+.earth{
+ width:min(75vw,540px);aspect-ratio:1;border-radius:50%;
+ position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+ background:
+ radial-gradient(circle at 30% 30%,#87c9e5,#27739b 18%,#102c49 48%,#03060a 72%);
+ box-shadow:0 0 70px #2795cb50,inset -35px -20px 80px #000;
+ transition:transform 4s,opacity 3s;
+}
+.earth::after{
+ content:"";position:absolute;inset:-5%;
+ border-radius:50%;
+ border:2px solid #65d8ff40;
+ box-shadow:0 0 30px #5bd4ff33;
+}
+.introText{z-index:2;position:relative;padding:24px}
+.introText small{color:var(--cyan);letter-spacing:5px}
+.introText h1{font-size:clamp(34px,8vw,90px);letter-spacing:5px;margin:18px 0}
+.introText p{color:#c3d2df;line-height:1.8}
+.btn{
+ background:var(--cyan);color:#06111a;border:0;padding:15px 24px;
+ letter-spacing:2px;font-weight:bold;border-radius:4px;margin-top:25px;
+ transition:.25s;
+}
+.btn:hover{transform:translateY(-3px);filter:brightness(1.12)}
+#skip{
+ position:absolute;right:20px;top:20px;
+ background:#131c28;border:1px solid #506171;color:#c6d6e3;
+ padding:10px 14px;letter-spacing:1px
+}
+#depthText{position:absolute;bottom:30px;left:0;right:0;color:#7fa3bc;font-size:12px;letter-spacing:3px}
+#diveLayer{
+ position:absolute;inset:0;opacity:0;pointer-events:none;
+ background:linear-gradient(#14749a,#063750,#041a2c,#03080e);
+ transition:opacity 2s;
+}
+#intro.dive .earth{transform:translate(-50%,-50%) scale(5);opacity:0}
+#intro.dive .introText{opacity:0;transition:opacity 1s}
+#intro.dive #diveLayer{opacity:1}
+#intro.dive #depthText{color:white}
+
+/* NAV */
+header{
+ position:sticky;top:0;z-index:30;background:#0b1119f5;
+ border-bottom:1px solid var(--line);
+ display:flex;align-items:center;justify-content:space-between;
+ padding:16px 5%;gap:20px;
+}
+.logo{font-weight:800;letter-spacing:3px}
+.logo span{color:var(--cyan)}
+nav{display:flex;gap:17px;flex-wrap:wrap}
+nav a{font-size:11px;color:#c5d0d9;letter-spacing:1px}
+nav a:hover{color:var(--cyan)}
+.hero{
+ min-height:430px;padding:80px 7%;display:flex;align-items:center;
+ background:
+ linear-gradient(90deg,#060b12 0%,#09121bbd 50%,#07111a55),
+ url("https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=1400&q=75") center/cover;
+}
+.hero small{letter-spacing:4px;color:var(--cyan)}
+.hero h2{font-size:clamp(35px,6vw,70px);margin:20px 0}
+.hero p{max-width:650px;color:#c6d3df;line-height:1.8}
+.hero .btn{display:inline-block}
+
+/* GENERAL */
+section{max-width:1150px;margin:auto;padding:70px 22px}
+.label{color:var(--cyan);font-size:11px;letter-spacing:4px}
+h2{font-size:clamp(27px,4vw,40px);margin:15px 0 22px}
+h3{margin:10px 0 12px}
+.text{color:var(--muted);line-height:1.85;max-width:850px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.card{
+ background:var(--panel);border:1px solid var(--line);border-radius:9px;
+ overflow:hidden;transition:.25s
+}
+.card:hover{transform:translateY(-4px);border-color:#51829c}
+.card img{width:100%;height:190px;object-fit:cover}
+.card .body{padding:22px}
+.card p{color:var(--muted);font-size:14px;line-height:1.75}
+.card .tag{font-size:10px;color:var(--cyan);letter-spacing:2px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:25px}
+.fact{background:#111b25;border:1px solid var(--line);padding:20px;border-radius:8px}
+.fact strong{font-size:25px;color:var(--orange);display:block;margin-bottom:10px}
+.fact p{color:var(--muted);font-size:13px;line-height:1.6}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:25px}
+.panel{background:var(--panel);border:1px solid var(--line);padding:25px;border-radius:9px}
+.panel p{color:var(--muted);line-height:1.8}
+.list{padding-left:20px;color:var(--muted);line-height:2}
+.timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:30px}
+.timecard{padding:18px;background:#111b25;border:1px solid var(--line);border-radius:7px}
+.timecard b{color:var(--cyan);font-size:13px}
+.timecard p{font-size:12px;color:var(--muted);line-height:1.6;margin-top:9px}
+details{background:var(--panel);border:1px solid var(--line);padding:17px 20px;border-radius:7px;margin:10px 0}
+summary{cursor:pointer;font-weight:bold}
+details p{color:var(--muted);line-height:1.8;margin-top:12px}
+footer{text-align:center;border-top:1px solid var(--line);padding:35px 20px;color:#8fa2b3}
+footer strong{color:var(--cyan);letter-spacing:3px}
+
+/* MODAL */
+.modal{
+ display:none;position:fixed;inset:0;z-index:50;background:#000b;
+ align-items:center;justify-content:center;padding:20px
+}
+.modal.show{display:flex}
+.modalBox{
+ background:#101923;border:1px solid #344655;border-radius:10px;
+ width:min(700px,100%);max-height:85vh;overflow:auto;padding:28px
+}
+.modalBox h2{color:var(--cyan)}
+.modalBox p{color:#b9c8d4;line-height:1.8}
+.close{float:right;background:transparent;border:1px solid #536677;color:white;padding:8px 13px}
+@media(max-width:800px){
+ header{align-items:flex-start;flex-direction:column}
+ nav{gap:12px}
+ .grid{grid-template-columns:repeat(2,1fr)}
+ .facts{grid-template-columns:repeat(2,1fr)}
+ .timeline{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:500px){
+ .grid,.two,.facts,.timeline{grid-template-columns:1fr}
+ .hero{min-height:370px;padding:55px 20px}
+ section{padding:55px 17px}
+ .card img{height:170px}
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<div id="intro">
+ <div class="stars"></div>
+ <div class="earth"></div>
+ <div id="diveLayer"></div>
+ <div class="introText">
+  <small>MISSION SCIENTIFIQUE • TERRE</small>
+  <h1>AU CENTRE<br>DE LA TERRE</h1>
+  <p>Une expédition au cœur de notre planète.<br>Explorez les secrets enfouis sous nos pieds.</p>
+  <button class="btn" onclick="startDive()">COMMENCER L'EXPÉDITION ↓</button>
+ </div>
+ <button id="skip" onclick="skipDive()">PASSER ⏩</button>
+ <div id="depthText">SURFACE TERRESTRE • 0 KM</div>
+</div>
+
+<!-- SITE -->
+<div id="site" style="display:none">
+<header>
+ <div class="logo">CENTRE<span>•</span>TERRE</div>
+ <nav>
+  <a href="#planete">TERRE</a>
+  <a href="#structure">STRUCTURE</a>
+  <a href="#volcans">VOLCANS</a>
+  <a href="#seismes">SÉISMES</a>
+  <a href="#magnetisme">MAGNÉTISME</a>
+  <a href="#records">RECORDS</a>
+  <a href="#glossaire">GLOSSAIRE</a>
+ </nav>
+</header>
+
+<div class="hero">
+ <div>
+  <small>EXPÉDITION SCIENTIFIQUE N°01</small>
+  <h2>Un monde sous<br>nos pieds.</h2>
+  <p>La Terre semble solide. Pourtant, sous sa surface se cachent des températures extrêmes, des pressions gigantesques et des mouvements qui façonnent les continents.</p>
+  <a href="#structure" class="btn">EXPLORER LES COUCHES</a>
+ </div>
+</div>
+
+<!-- SECTION 1 -->
+<section id="planete">
+ <div class="label">01 — NOTRE PLANÈTE</div>
+ <h2>La Terre, un monde unique</h2>
+ <p class="text">La Terre est la troisième planète du système solaire. Elle possède une surface solide, de l'eau liquide et une atmosphère qui permet à une grande diversité de vie de se développer. Sa structure interne est organisée en plusieurs couches, formées au cours de milliards d'années.</p>
+ <div class="facts">
+  <div class="fact"><strong>4,54 Md</strong><p>Âge approximatif de la Terre, en années.</p></div>
+  <div class="fact"><strong>6 371 km</strong><p>Rayon moyen de la planète.</p></div>
+  <div class="fact"><strong>~5 500 °C</strong><p>Température estimée au centre de la Terre.</p></div>
+  <div class="fact"><strong>71 %</strong><p>Environ la proportion de surface recouverte d'eau.</p></div>
+ </div>
+ <div class="two">
+  <div class="panel">
+   <h3>Comment la Terre s'est formée ?</h3>
+   <p>La Terre s'est formée il y a environ 4,54 milliards d'années à partir de poussières et de matériaux présents autour du jeune Soleil. Les collisions entre ces matériaux ont progressivement formé une planète. Au début, la Terre était extrêmement chaude. Les matériaux se sont séparés selon leur densité : les éléments les plus lourds ont migré vers le centre, tandis que les matériaux plus légers sont restés près de la surface.</p>
+  </div>
+  <div class="panel">
+   <h3>Pourquoi l'intérieur est chaud ?</h3>
+   <p>La chaleur interne provient principalement de l'énergie conservée depuis la formation de la Terre, des collisions anciennes et de la désintégration d'éléments radioactifs dans les roches. Cette chaleur s'évacue lentement et participe aux mouvements du manteau et à l'activité géologique.</p>
+  </div>
+ </div>
+</section>
+
+<!-- STRUCTURE -->
+<section id="structure">
+ <div class="label">02 — STRUCTURE INTERNE</div>
+ <h2>Les quatre grandes couches</h2>
+ <p class="text">La Terre est constituée de couches concentriques. Elles se distinguent par leur composition, leur température, leur pression et leur comportement mécanique.</p>
+ <div class="grid">
+  <div class="card">
+   <img loading="lazy" src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=70" alt="Montagnes et surface terrestre">
+   <div class="body"><div class="tag">0 À ~70 KM</div><h3>La croûte</h3>
+   <p>La couche la plus externe et la plus mince. Elle comprend la croûte continentale et la croûte océanique. Elle est composée de roches solides et forme les continents et le fond des océans.</p></div>
+  </div>
+  <div class="card">
+   <img loading="lazy" src="https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&q=70" alt="Paysage rocheux">
+   <div class="body"><div class="tag">JUSQU'À ~2 900 KM</div><h3>Le manteau</h3>
+   <p>La couche la plus épaisse. Il est constitué de roches très chaudes qui restent majoritairement solides, mais peuvent se déformer lentement sur de très longues durées.</p></div>
+  </div>
+  <div class="card">
+   <img loading="lazy" src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?auto=format&fit=crop&w=800&q=70" alt="Textures et chaleur">
+   <div class="body"><div class="tag">~2 900 À 5 150 KM</div><h3>Noyau externe</h3>
+   <p>Cette couche est essentiellement composée de fer et de nickel liquides. Ses mouvements contribuent à générer le champ magnétique terrestre.</p></div>
+  </div>
+  <div class="card">
+   <img loading="lazy" src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=70" alt="Centre lumineux">
+   <div class="body"><div class="tag">~5 150 À 6 371 KM</div><h3>Noyau interne</h3>
+   <p>La graine est une sphère solide principalement composée de fer et de nickel. Malgré une température très élevée, l'immense pression maintient les matériaux à l'état solide.</p></div>
+  </div>
+ </div>
+ <div class="panel" style="margin-top:25px">
+  <h3>Pourquoi le noyau interne est-il solide ?</h3>
+  <p>La température au centre est extrêmement élevée. Cependant, la pression est tellement intense qu'elle empêche le fer de fondre comme il le ferait à la surface. C'est l'équilibre entre température et pression qui explique son état solide.</p>
+ </div>
+</section>
+
+<!-- CROÛTE -->
+<section>
+ <div class="label">03 — LA CROÛTE</div>
+ <h2>La surface de la Terre</h2>
+ <p class="text">La croûte terrestre est la partie externe sur laquelle nous vivons. Elle est fragmentée en plaques tectoniques qui se déplacent très lentement. Ce mouvement transforme les paysages au fil du temps.</p>
+ <div class="grid">
+  <div class="card"><div class="body"><h3>Croûte continentale</h3><p>Elle forme les continents. Généralement plus épaisse et moins dense que la croûte océanique, elle contient de nombreuses roches granitiques.</p></div></div>
+  <div class="card"><div class="body"><h3>Croûte océanique</h3><p>Elle se trouve sous les océans. Plus mince et plus dense, elle est souvent constituée de roches basaltiques.</p></div></div>
+  <div class="card"><div class="body"><h3>Les plaques tectoniques</h3><p>Les plaques comprennent la croûte et une partie rigide du manteau supérieur. Elles se déplacent sur une couche plus ductile.</p></div></div>
+ </div>
+ <h3 style="margin-top:35px">Les trois types de frontières</h3>
+ <div class="grid">
+  <div class="card"><div class="body"><h3>Frontière divergente</h3><p>Les plaques s'écartent. Du magma peut remonter et créer de la nouvelle croûte, notamment au niveau des dorsales océaniques.</p></div></div>
+  <div class="card"><div class="body"><h3>Frontière convergente</h3><p>Les plaques se rapprochent. Une plaque peut plonger sous une autre, ou les continents entrer en collision et former des montagnes.</p></div></div>
+  <div class="card"><div class="body"><h3>Frontière transformante</h3><p>Les plaques coulissent horizontalement. Le frottement et les ruptures peuvent provoquer des séismes.</p></div></div>
+ </div>
+</section>
+
+<!-- MANTEAU -->
+<section>
+ <div class="label">04 — LE MANTEAU</div>
+ <h2>Une couche qui bouge lentement</h2>
+ <p class="text">Le manteau représente la majeure partie du volume de la Terre. Il est constitué de roches riches en silicates. Même s'il est solide, il peut se déformer très lentement sous l'effet de la chaleur et de la pression.</p>
+ <div class="two">
+  <div class="panel"><h3>La convection</h3><p>La chaleur interne entraîne des mouvements très lents dans le manteau. Les matériaux chauds tendent à remonter, tandis que les matériaux plus froids tendent à descendre. Ces mouvements participent à la dynamique des plaques tectoniques.</p></div>
+  <div class="panel"><h3>La lithosphère</h3><p>Elle comprend la croûte et la partie supérieure rigide du manteau. Elle est découpée en plaques qui se déplacent à l'échelle de quelques centimètres par an, parfois davantage ou moins selon les régions.</p></div>
+ </div>
+</section>
+
+<!-- VOLCANS -->
+<section id="volcans">
+ <div class="label">05 — VOLCANOLOGIE</div>
+ <h2>Les volcans</h2>
+ <p class="text">Un volcan est une ouverture ou une structure par laquelle du magma, des gaz et parfois des fragments de roche peuvent atteindre la surface. Les volcans sont liés à la dynamique interne de la Terre.</p>
+ <div class="grid">
+  <div class="card"><img loading="lazy" src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&w=800&q=70" alt="Paysage volcanique"><div class="body"><h3>Le magma</h3><p>Le magma est de la roche fondue ou partiellement fondue présente en profondeur. Lorsqu'il atteint la surface, il est appelé lave.</p></div></div>
+  <div class="card"><div class="body"><h3>Éruption effusive</h3><p>Une lave relativement fluide s'écoule. Les gaz peuvent s'échapper plus facilement, ce qui donne souvent des coulées de lave.</p></div></div>
+  <div class="card"><div class="body"><h3>Éruption explosive</h3><p>Une éruption peut être violente lorsque des gaz sont piégés dans un magma visqueux. Elle peut projeter cendres, fragments et nuées ardentes.</p></div></div>
+ </div>
+ <div class="two">
+  <div class="panel"><h3>Pourquoi les volcans se forment ?</h3><p>Ils se forment notamment aux frontières des plaques tectoniques, dans les zones de subduction et de divergence, mais aussi au-dessus de certains points chauds du manteau.</p></div>
+  <div class="panel"><h3>Les volcans et les humains</h3><p>Ils peuvent être dangereux, mais ils enrichissent aussi certains sols, créent de nouvelles terres et permettent d'utiliser la chaleur géothermique.</p></div>
+ </div>
+</section>
+
+<!-- SEISMES -->
+<section id="seismes">
+ <div class="label">06 — SISMOLOGIE</div>
+ <h2>Les séismes</h2>
+ <p class="text">Un séisme correspond à une libération brutale d'énergie dans la Terre. Cette énergie se propage sous forme d'ondes sismiques. La plupart des séismes sont liés aux mouvements des failles et des plaques tectoniques.</p>
+ <div class="grid">
+  <div class="card"><div class="body"><h3>Les failles</h3><p>Une faille est une fracture des roches le long de laquelle des blocs se déplacent. Les contraintes s'accumulent puis peuvent être libérées brusquement.</p></div></div>
+  <div class="card"><div class="body"><h3>Les ondes sismiques</h3><p>Les ondes P traversent les solides et les liquides. Les ondes S ne traversent pas les liquides. Les ondes de surface peuvent provoquer d'importants mouvements du sol.</p></div></div>
+  <div class="card"><div class="body"><h3>Magnitude et intensité</h3><p>La magnitude caractérise la taille d'un séisme. L'intensité décrit les effets et dégâts observés en un lieu précis. Elles ne mesurent pas la même chose.</p></div></div>
+ </div>
+ <div class="panel" style="margin-top:20px">
+  <h3>Comment les scientifiques étudient les séismes ?</h3>
+  <p>Les sismologues utilisent des sismomètres pour détecter et enregistrer les vibrations du sol. En comparant les signaux de plusieurs stations, ils peuvent étudier la localisation, la profondeur et les caractéristiques des séismes.</p>
+ </div>
+</section>
+
+<!-- NOYAU -->
+<section>
+ <div class="label">07 — LE NOYAU</div>
+ <h2>Le cœur métallique de la planète</h2>
+ <div class="two">
+  <div class="panel"><h3>Un noyau principalement métallique</h3><p>Les mesures géophysiques indiquent que le noyau est principalement constitué de fer et de nickel, avec d'autres éléments en plus petites proportions. Il se divise en noyau externe liquide et noyau interne solide.</p></div>
+  <div class="panel"><h3>Pression extrême</h3><p>La pression augmente avec la profondeur. Au centre, elle atteint plusieurs millions de fois la pression atmosphérique de surface, ce qui modifie le comportement des matériaux.</p></div>
+ </div>
+ <div class="facts">
+  <div class="fact"><strong>Liquide</strong><p>Le noyau externe est en mouvement.</p></div>
+  <div class="fact"><strong>Solide</strong><p>Le noyau interne est une graine métallique.</p></div>
+  <div class="fact"><strong>Fer</strong><p>Le principal composant du noyau.</p></div>
+  <div class="fact"><strong>Pression</strong><p>Très élevée au centre de la planète.</p></div>
+ </div>
+</section>
+
+<!-- MAGNETISME -->
+<section id="magnetisme">
+ <div class="label">08 — CHAMP MAGNÉTIQUE</div>
+ <h2>Le bouclier invisible</h2>
+ <p class="text">La Terre possède un champ magnétique. Il est principalement généré par les mouvements du métal liquide conducteur dans le noyau externe. Ce phénomène est appelé géodynamo.</p>
+ <div class="two">
+  <div class="panel"><h3>La géodynamo</h3><p>La convection du noyau externe, combinée à la rotation terrestre, contribue à produire et maintenir le champ magnétique. Celui-ci varie au cours du temps.</p></div>
+  <div class="panel"><h3>La magnétosphère</h3><p>Le champ magnétique forme une région autour de la Terre qui interagit avec le vent solaire. Il contribue à protéger l'atmosphère et influence les particules chargées autour de la planète.</p></div>
+ </div>
+ <div class="panel" style="margin-top:20px"><h3>Les aurores polaires</h3><p>Lorsque des particules énergétiques interagissent avec les gaz de la haute atmosphère, elles peuvent produire de magnifiques lumières colorées près des régions polaires. Ces phénomènes sont appelés aurores boréales et australes.</p></div>
+</section>
+
+<!-- TEMPERATURE -->
+<section>
+ <div class="label">09 — TEMPÉRATURE ET PRESSION</div>
+ <h2>Les conditions extrêmes</h2>
+ <p class="text">La température et la pression augmentent globalement avec la profondeur. Les scientifiques étudient ces conditions grâce aux mesures indirectes, aux expériences en laboratoire et aux modèles géophysiques.</p>
+ <div class="grid">
+  <div class="card"><div class="body"><h3>La température</h3><p>Elle est de quelques dizaines à quelques centaines de degrés dans certaines parties de la croûte, et atteint plusieurs milliers de degrés dans les régions profondes.</p></div></div>
+  <div class="card"><div class="body"><h3>La pression</h3><p>Les couches supérieures exercent leur poids sur les couches inférieures. La pression devient immense en profondeur et influence les propriétés des roches et des métaux.</p></div></div>
+  <div class="card"><div class="body"><h3>Les matériaux</h3><p>Les mêmes matériaux peuvent avoir des propriétés différentes selon la température et la pression. C'est essentiel pour comprendre la structure interne terrestre.</p></div></div>
+ </div>
+</section>
+
+<!-- RECORDS -->
+<section id="records">
+ <div class="label">10 — RECORDS & CURIOSITÉS</div>
+ <h2>La Terre étonnante</h2>
+ <div class="grid">
+  <div class="fact"><strong>4,54 milliards</strong><p>Années : l'âge estimé de notre planète.</p></div>
+  <div class="fact"><strong>~6 371 km</strong><p>Rayon moyen de la Terre.</p></div>
+  <div class="fact"><strong>~2 900 km</strong><p>Épaisseur approximative du manteau.</p></div>
+  <div class="fact"><strong>~5 150 km</strong><p>Profondeur de la limite du noyau interne.</p></div>
+  <div class="fact"><strong>~5 500 °C</strong><p>Température estimée du centre.</p></div>
+  <div class="fact"><strong>Continents</strong><p>Leurs positions changent sur des millions d'années.</p></div>
+ </div>
+ <div class="panel" style="margin-top:20px">
+  <h3>Peut-on aller jusqu'au centre de la Terre ?</h3>
+  <p>Non, pas avec les technologies actuelles. Les forages les plus profonds n'atteignent qu'une petite partie de la croûte. La chaleur, la pression et les difficultés techniques rendent impossible un voyage jusqu'au noyau. Les scientifiques utilisent les ondes sismiques pour connaître l'intérieur de la planète.</p>
+ </div>
+</section>
+
+<!-- FAQ -->
+<section>
+ <div class="label">11 — QUESTIONS SCIENTIFIQUES</div>
+ <h2>Questions fréquentes</h2>
+ <details><summary>Le manteau est-il liquide ?</summary><p>Non, le manteau est principalement solide. Il peut cependant se déformer lentement à l'échelle géologique.</p></details>
+ <details><summary>Pourquoi le noyau externe est-il liquide ?</summary><p>Les conditions de température et de pression y permettent au fer et à d'autres matériaux de rester liquides.</p></details>
+ <details><summary>Pourquoi le centre de la Terre est-il si chaud ?</summary><p>La chaleur restante de la formation de la Terre, les impacts anciens et la radioactivité naturelle contribuent à cette température.</p></details>
+ <details><summary>Les plaques tectoniques bougent-elles vite ?</summary><p>Non, elles se déplacent généralement de quelques centimètres par an, à une vitesse comparable à celle de la croissance des ongles.</p></details>
+ <details><summary>Comment sait-on ce qu'il y a sous nos pieds ?</summary><p>Les ondes sismiques traversent la Terre. Leur vitesse et leur trajectoire changent selon les matériaux, ce qui permet de déduire la structure des couches internes.</p></details>
+ <details><summary>Le champ magnétique est-il permanent ?</summary><p>Il change avec le temps. Il peut varier en intensité et en direction, et les pôles magnétiques se déplacent.</p></details>
+</section>
+
+<!-- GLOSSAIRE -->
+<section id="glossaire">
+ <div class="label">12 — GLOSSAIRE</div>
+ <h2>Les mots à connaître</h2>
+ <div class="grid">
+  <div class="fact"><strong>Magma</strong><p>Roche fondue ou partiellement fondue présente en profondeur.</p></div>
+  <div class="fact"><strong>Lave</strong><p>Magma qui atteint la surface terrestre.</p></div>
+  <div class="fact"><strong>Subduction</strong><p>Plongée d'une plaque tectonique sous une autre.</p></div>
+  <div class="fact"><strong>Dorsale</strong><p>Longue chaîne sous-marine où des plaques s'écartent.</p></div>
+  <div class="fact"><strong>Sismologie</strong><p>Science qui étudie les séismes et les ondes sismiques.</p></div>
+  <div class="fact"><strong>Géodynamo</strong><p>Processus qui produit le champ magnétique terrestre.</p></div>
+  <div class="fact"><strong>Lithosphère</strong><p>Enveloppe rigide composée de la croûte et du manteau supérieur.</p></div>
+  <div class="fact"><strong>Convection</strong><p>Mouvement de matière lié aux différences de température et de densité.</p></div>
+  <div class="fact"><strong>Minéral</strong><p>Substance naturelle généralement solide, avec une composition et une structure caractéristiques.</p></div>
+ </div>
+</section>
+
+<!-- SOURCES -->
+<section>
+ <div class="label">13 — POUR ALLER PLUS LOIN</div>
+ <h2>Sources scientifiques</h2>
+ <p class="text">Pour approfondir le sujet et vérifier les informations, consulte les ressources scientifiques suivantes.</p>
+ <div class="grid">
+  <div class="card"><div class="body"><h3>NASA Earth</h3><p>Découvrir notre planète et ses systèmes.</p><a style="color:var(--cyan)" href="https://earth.nasa.gov/" target="_blank" rel="noopener">Visiter NASA Earth ↗</a></div></div>
+  <div class="card"><div class="body"><h3>USGS</h3><p>Géologie, séismes, volcans et sciences de la Terre.</p><a style="color:var(--cyan)" href="https://www.usgs.gov/" target="_blank" rel="noopener">Visiter USGS ↗</a></div></div>
+  <div class="card"><div class="body"><h3>BRGM</h3><p>Ressources géologiques et connaissances du sous-sol français.</p><a style="color:var(--cyan)" href="https://www.brgm.fr/" target="_blank" rel="noopener">Visiter BRGM ↗</a></div></div>
+  <div class="card"><div class="body"><h3>Institut de Physique du Globe</h3><p>Recherche sur la Terre, les volcans et les risques naturels.</p><a style="color:var(--cyan)" href="https://www.ipgp.fr/" target="_blank" rel="noopener">Visiter IPGP ↗</a></div></div>
+  <div class="card"><div class="body"><h3>CNRS</h3><p>Recherches et actualités scientifiques.</p><a style="color:var(--cyan)" href="https://www.cnrs.fr/" target="_blank" rel="noopener">Visiter CNRS ↗</a></div></div>
+  <div class="card"><div class="body"><h3>Géosciences</h3><p>Pour comprendre les phénomènes géologiques et le fonctionnement de la planète.</p><a style="color:var(--cyan)" href="https://www.geosciences.fr/" target="_blank" rel="noopener">Explorer ↗</a></div></div>
+ </div>
+</section>
+
+<footer>
+ <strong>AU CENTRE DE LA TERRE</strong>
+ <p style="margin-top:12px">Expédition scientifique — Comprendre notre planète</p>
+ <p style="margin-top:20px">PRODUIT PAR AMINE &amp; KENNY</p>
+</footer>
+</div>
+
+<script>
+let diveStarted=false;
+function startDive(){
+ if(diveStarted)return;
+ diveStarted=true;
+ const intro=document.getElementById("intro");
+ const depth=document.getElementById("depthText");
+ intro.classList.add("dive");
+ const stages=[
+  ["DESCENTE : 10 KM",1500],
+  ["CROÛTE TERRESTRE",3500],
+  ["MANTEAU SUPÉRIEUR",5500],
+  ["MANTEAU PROFOND",7500],
+  ["NOYAU EXTERNE",9500],
+  ["NOYAU INTERNE",11500]
+ ];
+ stages.forEach(([txt,time])=>setTimeout(()=>{
+  if(depth)depth.textContent=txt;
+ },time));
+ setTimeout(reveal,timeTotal());
+}
+function timeTotal(){return 13500}
+function reveal(){
+ document.getElementById("intro").style.display="none";
+ document.getElementById("site").style.display="block";
+ document.body.style.overflow="auto";
+}
+function skipDive(){
+ diveStarted=true;
+ reveal();
+}
+</script>
+</body>
+</html>
